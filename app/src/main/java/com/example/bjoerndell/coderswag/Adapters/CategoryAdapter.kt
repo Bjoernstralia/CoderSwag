@@ -1,6 +1,7 @@
 package com.example.bjoerndell.coderswag.Adapters
 
 import android.content.Context
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,16 +19,30 @@ class CategoryAdapter(context: Context, categories: List<Category>) : BaseAdapte
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val categoryView: View
 
-        categoryView = LayoutInflater.from(context).inflate(R.layout.listview_item, null)
-        val categoryImage: ImageView = categoryView.findViewById(R.id.categoryImage)
-        val categoryName: TextView = categoryView.findViewById(R.id.categoryName)
-        val categories = categories[position]
+        val holder: ViewHolder
 
+        if (convertView == null) {
+            categoryView = LayoutInflater.from(context).inflate(R.layout.listview_item, null)
+
+            holder = ViewHolder()
+            holder.categoryImage = categoryView.findViewById(R.id.categoryImage)
+            holder.categoryName = categoryView.findViewById(R.id.categoryName)
+
+            categoryView.tag = holder //Was macht das genau?
+
+
+        } else {
+            holder = convertView.tag as ViewHolder
+            categoryView = convertView
+        }
+
+
+        val categories = categories[position]
         val catImage = context.resources.getIdentifier(categories.image, "drawable", context.packageName)
         val catName = categories.title
 
-        categoryName.text = catName
-        categoryImage.setImageResource(catImage)
+        holder.categoryImage?.setImageResource(catImage)
+        holder.categoryName?.text = catName
 
         return categoryView
     }
@@ -42,6 +57,11 @@ class CategoryAdapter(context: Context, categories: List<Category>) : BaseAdapte
 
     override fun getCount(): Int {
         return categories.count()
+    }
+
+    private class ViewHolder(){
+        var categoryImage: ImageView? = null
+        var categoryName: TextView? = null
     }
 
 }
